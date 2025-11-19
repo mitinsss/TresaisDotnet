@@ -1,0 +1,112 @@
+@model PraktiskaisDarbs3.Models.OrderCreateViewModel
+@{
+    ViewData["Title"] = "Pievienot pasūtījumu";
+    var items = ViewBag.Items as SelectList;
+}
+
+<h2>Pievienot pasūtījumu</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+}
+
+<form asp-action="Create" method="post" id="orderForm">
+    @Html.AntiForgeryToken()
+
+    <div id="orderItemsContainer">
+        @for (int i = 0; i < Model.OrderItems.Count; i++)
+        {
+            <div class="order-item-row mb-3 border p-3">
+                <div class="row">
+                    <div class="col-md-5">
+                        <label class="form-label">Prece</label>
+                        <select asp-for="OrderItems[i].ItemId" class="form-select">
+                            <option value="">-- izvēlies --</option>
+                            @if (items != null)
+                            {
+                                @foreach (var item in items)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="OrderItems[i].ItemId" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Daudzums</label>
+                        <input asp-for="OrderItems[i].Amount" class="form-control" type="number" min="1" />
+                        <span asp-validation-for="OrderItems[i].Amount" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        @if (i > 0)
+                        {
+                            <button type="button" class="btn btn-danger remove-item">Noņemt</button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mb-3">
+        <button type="button" class="btn btn-secondary" id="addItem">Pievienot preci</button>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Izveidot pasūtījumu</button>
+    <a asp-action="Index" class="btn btn-secondary">Atpakaļ</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        let itemIndex = @Model.OrderItems.Count;
+        @{
+            var itemsList = items?.Select(i => new { value = i.Value, text = i.Text }).ToList();
+        }
+        const itemsSelect = @Html.Raw(itemsList != null ? System.Text.Json.JsonSerializer.Serialize(itemsList) : "[]");
+
+        document.getElementById('addItem').addEventListener('click', function() {
+            const container = document.getElementById('orderItemsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'order-item-row mb-3 border p-3';
+            
+            let optionsHtml = '<option value="">-- izvēlies --</option>';
+            if (itemsSelect && Array.isArray(itemsSelect) && itemsSelect.length > 0) {
+                itemsSelect.forEach(function(item) {
+                    if (item && item.value && item.text) {
+                        optionsHtml += '<option value="' + item.value + '">' + item.text + '</option>';
+                    }
+                });
+            }
+            
+            newRow.innerHTML = `
+                <div class="row">
+                    <div class="col-md-5">
+                        <label class="form-label">Prece</label>
+                        <select name="OrderItems[${itemIndex}].ItemId" class="form-select">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Daudzums</label>
+                        <input name="OrderItems[${itemIndex}].Amount" class="form-control" type="number" min="1" value="1" />
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger remove-item">Noņemt</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(newRow);
+            itemIndex++;
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-item')) {
+                e.target.closest('.order-item-row').remove();
+            }
+        });
+    </script>
+}

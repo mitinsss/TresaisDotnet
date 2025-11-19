@@ -1,0 +1,161 @@
+﻿@model QueriesViewModel
+@{
+    ViewData["Title"] = "Sākumlapa";
+}
+
+<h1>Sākumlapa</h1>
+
+<div class="row mb-4">
+    <div class="col-md-4 d-flex">
+        <div class="card w-100 d-flex flex-column">
+            <div class="card-header">
+                <h5>Prece ar zemāko krājumu</h5>
+            </div>
+            <div class="card-body d-flex flex-column">
+                @if (Model.LowestStockItem != null)
+                {
+                    <p><strong>@Model.LowestStockItem.Name</strong></p>
+                    <p>Kategorija: @Model.LowestStockItem.Category?.Name</p>
+                    <p class="mt-auto">Krājums: <span class="badge bg-warning">@Model.LowestStockItem.Quantity</span></p>
+                }
+                else
+                {
+                    <p class="text-muted">Nav preču</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex">
+        <div class="card w-100 d-flex flex-column">
+            <div class="card-header">
+                <h5>Prece ar lielāko krājumu</h5>
+            </div>
+            <div class="card-body d-flex flex-column">
+                @if (Model.HighestStockItem != null)
+                {
+                    <p><strong>@Model.HighestStockItem.Name</strong></p>
+                    <p>Kategorija: @Model.HighestStockItem.Category?.Name</p>
+                    <p class="mt-auto">Krājums: <span class="badge bg-success">@Model.HighestStockItem.Quantity</span></p>
+                }
+                else
+                {
+                    <p class="text-muted">Nav preču</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 d-flex">
+        <div class="card w-100 d-flex flex-column">
+            <div class="card-header">
+                <h5>Jaunākais pasūtījums</h5>
+            </div>
+            <div class="card-body d-flex flex-column">
+                @if (Model.NewestOrder != null)
+                {
+                    <p><strong>Pasūtījums #@Model.NewestOrder.Id</strong></p>
+                    @if (Model.NewestOrder.OrderItems != null && Model.NewestOrder.OrderItems.Any())
+                    {
+                        <p>Preces:</p>
+                        <ul class="mb-2">
+                            @foreach(var oi in Model.NewestOrder.OrderItems)
+                            {
+                                <li>@oi.Item?.Name (@oi.Item?.Category?.Name) - @oi.Amount</li>
+                            }
+                        </ul>
+                    }
+                    <p class="mt-auto">Datums: @Model.NewestOrder.CreatedAt.ToLocalTime().ToString("g")</p>
+                }
+                else
+                {
+                    <p class="text-muted">Nav pasūtījumu</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <h6 class="mb-3">Meklēt preces pēc kategorijas</h6>
+        <form method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="categoryName" value="@Model.CategoryNameInput" class="form-control" placeholder="Kategorija" />
+                <button type="submit" class="btn btn-primary">Meklēt</button>
+            </div>
+        </form>
+
+        @if (Model.ItemsByCategory != null && Model.ItemsByCategory.Any())
+        {
+            <ul class="list-group">
+                @foreach (var i in Model.ItemsByCategory)
+                {
+                    <li class="list-group-item">@i.Name <span class="text-muted">(@i.Category?.Name)</span></li>
+                }
+            </ul>
+        }
+        else if (Model.ItemsByCategory != null)
+        {
+            <p class="text-muted">Nav atrastu preču</p>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <h6 class="mb-3">Meklēt preces pēc nosaukuma</h6>
+        <form method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="itemName" value="@Model.ItemNameInput" class="form-control" placeholder="Preces nosaukums" />
+                <button type="submit" class="btn btn-primary">Meklēt</button>
+            </div>
+        </form>
+
+        @if (Model.ItemsByNameSearch != null && Model.ItemsByNameSearch.Any())
+        {
+            <ul class="list-group">
+                @foreach (var i in Model.ItemsByNameSearch)
+                {
+                    <li class="list-group-item">@i.Name <span class="text-muted">(@i.Category?.Name)</span></li>
+                }
+            </ul>
+        }
+        else if (Model.ItemsByNameSearch != null)
+        {
+            <p class="text-muted">Nav atrastu preču</p>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <h6 class="mb-3">Meklēt pasūtījumus pēc preces nosaukuma</h6>
+        <form method="get" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="orderItem" value="@Model.OrderItemSearch" class="form-control" placeholder="Prece" />
+                <button type="submit" class="btn btn-primary">Meklēt</button>
+            </div>
+        </form>
+
+        @if (Model.OrdersByItemName != null && Model.OrdersByItemName.Any())
+        {
+            <ul class="list-group">
+                @foreach (var o in Model.OrdersByItemName)
+                {
+                    <li class="list-group-item">
+                        <strong>Pasūtījums #@o.Id</strong><br />
+                        @if (o.OrderItems != null && o.OrderItems.Any())
+                        {
+                            @foreach(var oi in o.OrderItems.Where(oi => oi.Item?.Name != null && oi.Item.Name.ToLower().Contains((Model.OrderItemSearch ?? "").ToLower())))
+                            {
+                                <span>@oi.Item?.Name - Daudzums: @oi.Amount</span><br />
+                            }
+                        }
+                        <small class="text-muted">@o.CreatedAt.ToLocalTime().ToString("g")</small>
+                    </li>
+                }
+            </ul>
+        }
+        else if (Model.OrdersByItemName != null)
+        {
+            <p class="text-muted">Nav atrastu pasūtījumu</p>
+        }
+    </div>
+</div>

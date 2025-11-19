@@ -1,0 +1,25 @@
+@model PraktiskaisDarbs3.Models.Order
+@{
+    ViewData["Title"] = "Dzēst pasūtījumu";
+}
+
+<h2>Dzēst pasūtījumu</h2>
+
+<p>Vai tiešām dzēst pasūtījumu: <strong>@Model.Id</strong></p>
+@if (Model.OrderItems != null && Model.OrderItems.Any())
+{
+    <p>Preces:</p>
+    <ul>
+        @foreach(var oi in Model.OrderItems)
+        {
+            <li>@oi.Item?.Name (@oi.Item?.Category?.Name) - Daudzums: @oi.Amount</li>
+        }
+    </ul>
+}
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Jā, dzēst</button>
+    <a asp-action="Index" class="btn btn-secondary">Atcelt</a>
+</form>

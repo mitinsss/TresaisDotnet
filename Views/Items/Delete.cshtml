@@ -1,0 +1,15 @@
+@model PraktiskaisDarbs3.Models.Item
+@{
+    ViewData["Title"] = "Dzēst preci";
+}
+
+<h2>Dzēst preci</h2>
+
+<p>Vai tiešām dzēst preci: <strong>@Model.Name</strong> ?</p>
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Jā, dzēst</button>
+    <a asp-action="Index" class="btn btn-secondary">Atcelt</a>
+</form>

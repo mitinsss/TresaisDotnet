@@ -1,0 +1,29 @@
+@model IEnumerable<PraktiskaisDarbs3.Models.Order>
+@{
+    var id = ViewBag.ItemId;
+}
+<h2>Pasūtījumi priekš preces ID: @id</h2>
+
+<table class="table">
+<thead><tr><th>ID</th><th>Preces</th><th>Datums</th></tr></thead>
+<tbody>
+@foreach(var o in Model)
+{
+    <tr>
+        <td>@o.Id</td>
+        <td>
+            @if (o.OrderItems != null && o.OrderItems.Any())
+            {
+                <ul class="mb-0">
+                    @foreach(var oi in o.OrderItems.Where(oi => oi.ItemId == (int)ViewBag.ItemId))
+                    {
+                        <li>@oi.Item?.Name (@oi.Item?.Category?.Name) - Daudzums: @oi.Amount</li>
+                    }
+                </ul>
+            }
+        </td>
+        <td>@o.CreatedAt.ToString("g")</td>
+    </tr>
+}
+</tbody>
+</table>

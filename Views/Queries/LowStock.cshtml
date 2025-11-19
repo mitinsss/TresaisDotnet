@@ -1,0 +1,20 @@
+@model IEnumerable<PraktiskaisDarbs3.Models.Item>
+
+<h2>Top 5 preces ar zemāko krājumu</h2>
+
+<table class="table">
+    <thead>
+        <tr><th>ID</th><th>Nosaukums</th><th>Daudzums</th><th>Kategorija</th></tr>
+    </thead>
+    <tbody>
+    @foreach(var it in Model)
+    {
+        <tr>
+            <td>@it.Id</td>
+            <td>@it.Name</td>
+            <td>@it.Quantity</td>
+            <td>@it.Category?.Name</td>
+        </tr>
+    }
+    </tbody>
+</table>

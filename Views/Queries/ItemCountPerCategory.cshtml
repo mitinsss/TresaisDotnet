@@ -1,0 +1,13 @@
+@model IEnumerable<PraktiskaisDarbs3.Controllers.CategoryCountViewModel>
+
+<h2>Preču skaits pēc kategorijas</h2>
+
+<table class="table">
+    <thead><tr><th>Kategorija</th><th>Preču skaits</th></tr></thead>
+    <tbody>
+    @foreach(var r in Model)
+    {
+        <tr><td>@r.CategoryName</td><td>@r.ItemCount</td></tr>
+    }
+    </tbody>
+</table>

@@ -1,0 +1,32 @@
+@model PraktiskaisDarbs3.Models.Category
+@{
+    ViewData["Title"] = "Rediģēt kategoriju";
+}
+
+<h2>Rediģēt kategoriju</h2>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+}
+
+<form asp-action="Edit" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    
+    <div class="mb-3">
+        <label class="form-label">Nosaukums</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Saglabāt</button>
+    <a asp-action="Index" class="btn btn-secondary">Atpakaļ</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

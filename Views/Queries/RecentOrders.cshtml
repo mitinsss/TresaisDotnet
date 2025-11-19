@@ -1,0 +1,30 @@
+@model IEnumerable<PraktiskaisDarbs3.Models.Order>
+
+@{
+    var since = (DateTime?)ViewBag.Since;
+}
+<h2>Pasūtījumi pēdējās 7 dienās (@since?.ToString("s"))</h2>
+
+<table class="table">
+    <thead><tr><th>ID</th><th>Preces</th><th>Datums</th></tr></thead>
+    <tbody>
+    @foreach(var o in Model)
+    {
+        <tr>
+            <td>@o.Id</td>
+            <td>
+                @if (o.OrderItems != null && o.OrderItems.Any())
+                {
+                    <ul class="mb-0">
+                        @foreach(var oi in o.OrderItems)
+                        {
+                            <li>@oi.Item?.Name (@oi.Item?.Category?.Name) - Daudzums: @oi.Amount</li>
+                        }
+                    </ul>
+                }
+            </td>
+            <td>@o.CreatedAt.ToString("g")</td>
+        </tr>
+    }
+    </tbody>
+</table>

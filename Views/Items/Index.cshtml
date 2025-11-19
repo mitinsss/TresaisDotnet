@@ -1,0 +1,41 @@
+@model IEnumerable<PraktiskaisDarbs3.Models.Item>
+@{
+    ViewData["Title"] = "Preces";
+}
+
+<h2>Preces</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Pievienot preci</a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <p class="text-muted">Nav pievienotu preču.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead><tr><th>Id</th><th>Nosaukums</th><th>Daudzums</th><th>Kategorija</th><th></th></tr></thead>
+        <tbody>
+        @foreach(var it in Model)
+        {
+            <tr>
+                <td>@it.Id</td>
+                <td>@it.Name</td>
+                <td>@it.Quantity</td>
+                <td>@it.Category?.Name</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@it.Id">Rediģēt</a>
+                    <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@it.Id">Dzēst</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}

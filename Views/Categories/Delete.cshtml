@@ -1,0 +1,22 @@
+@model PraktiskaisDarbs3.Models.Category
+@{
+    ViewData["Title"] = "Dzēst kategoriju";
+}
+
+<h2>Dzēst kategoriju</h2>
+
+<p>Vai tiešām dzēst kategoriju: <strong>@Model.Name</strong> ?</p>
+
+@if (Model.Items != null && Model.Items.Any())
+{
+    <div class="alert alert-warning">
+        <strong>Uzmanību:</strong> Dzēšot kategoriju, tiks dzēstas arī visas tās preces (kaskāde).
+    </div>
+}
+
+<form asp-action="Delete" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Jā, dzēst</button>
+    <a asp-action="Index" class="btn btn-secondary">Atcelt</a>
+</form>

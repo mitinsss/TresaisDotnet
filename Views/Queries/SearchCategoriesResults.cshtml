@@ -1,0 +1,15 @@
+@model IEnumerable<dynamic>
+@{
+    var q = ViewBag.Query as string;
+}
+<h2>Kategorijas: '@q'</h2>
+
+<table class="table">
+    <thead><tr><th>ID</th><th>Nosaukums</th><th>Preces skaits</th></tr></thead>
+    <tbody>
+    @foreach(var c in Model)
+    {
+        <tr><td>@c.Id</td><td>@c.Name</td><td>@c.ItemCount</td></tr>
+    }
+    </tbody>
+</table>
